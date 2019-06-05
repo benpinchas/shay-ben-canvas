@@ -9,9 +9,6 @@ var gCtx;
 var gLastGest = {};
 var gCurrGest = {};
 
-var gLastDeg = 0;
-//prefs
-
 
 function init() {
     gCanvas = document.querySelector('#myCanvas');
@@ -24,9 +21,7 @@ function init() {
 
 
 function onMouseDown(ev) {
-    // console.log(ev);
     gIsMouseDown = true;
-
 }
 
 
@@ -44,11 +39,12 @@ function onMouseMove(ev) {
     gCurrGest.time = Date.now()
     
 
-    gCtx.save();
+    gCtx.save(); //
+
     gCtx.beginPath()
     draw(ev)
 
-    gCtx.restore();
+    gCtx.restore(); //
 
 }
 
@@ -83,8 +79,9 @@ function draw(ev) {
 
 function drawRect(x, y) {
     // console.log('times:', gCurrGest.time -gLastGest.time );
-    var width = getDimensions().width
-    var heigth = getDimensions().height
+    var dimensions = getDimensions()
+    var width = dimensions.width
+    var heigth = dimensions.height
 
     var centerX = x - width / 2
     var centerY = y - heigth / 2
@@ -138,11 +135,6 @@ function drawCircle(x, y) {
 }
 
 
-
-
-
-
-
 function onChangeColor(color) {
     gCtx.strokeStyle = color;
 }
@@ -155,6 +147,10 @@ function onSetShape(shape) {
 
 
 
+function downloadCanvas(elLink) {
+    var content = gCanvas.toDataURL('image/png');
+    elLink.href = content
+}
 
 
 

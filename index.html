@@ -12,7 +12,14 @@
 <body onload="init()">
     <section class="prefs-container">
         <input type="color" name="color" id="color" onchange="onChangeColor(this.value)">
-        
+    
+
+        <input name="img" id="imgData" type="hidden"/>
+        <a href="#" onclick="downloadCanvas(this)" download="my-canvas.png" >
+            Save as Png
+          </a>
+
+
         <select name="shape" id="shape" onchange="onSetShape(this.value)">
             <option value="rect">Rect</option>
             <option value="line">Line</option>
