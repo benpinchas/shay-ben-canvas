@@ -9,6 +9,7 @@ var gCtx;
 var gLastGest = {};
 var gCurrGest = {};
 
+var gLastDeg = 0;
 //prefs
 
 
@@ -40,6 +41,7 @@ function onMouseMove(ev) {
 
     gCurrGest.x = offsetX;
     gCurrGest.y = offsetY;
+    gCurrGest.time = Date.now()
     
 
     gCtx.save();
@@ -55,7 +57,7 @@ function onMouseUp(ev) {
     gIsMouseDown = false;
     gLastGest = {}
     gCurrGest = {}
-
+    gCtx.closePath(); //
 }
 
 
@@ -64,7 +66,6 @@ function draw(ev) {
     ev.preventDefault();
     const offsetX = ev.offsetX
     const offsetY = ev.offsetY
-    console.log(getPrefs().shape);
     switch (getPrefs().shape) {
         case 'rect':
             drawRect(offsetX, offsetY)
@@ -81,23 +82,45 @@ function draw(ev) {
 
 
 function drawRect(x, y) {
-
-    var width = 100;
-    var heigth = 50;
+    // console.log('times:', gCurrGest.time -gLastGest.time );
+    var width = getDimensions().width
+    var heigth = getDimensions().height
 
     var centerX = x - width / 2
     var centerY = y - heigth / 2
 
     // Matrix transformation
     gCtx.translate(centerX + width / 2, centerY + heigth / 2);
-    var deg = Math.random() * 180;
+    var deg = getGestDeg()
     gCtx.rotate(deg * Math.PI / 180);
     gCtx.translate(-(centerX + width / 2), -(centerY + heigth / 2));
-
-    //rectangle
+   
     gCtx.rect(centerX, centerY, width, heigth);
     gCtx.stroke()
 }
+
+
+
+function getGestDeg() {
+    var diffX = (gCurrGest.x - gLastGest.x)
+    var diffY = (gCurrGest.y - gLastGest.y)
+
+    // var shipua = diffY/diffX
+    var angleDeg = Math.atan2(diffY, diffX) * 180 / Math.PI;
+    return angleDeg + 90;
+}
+
+
+function getDimensions() {
+    var distanceX = Math.abs(gCurrGest.x - gLastGest.x);
+    var distanceY = Math.abs(gCurrGest.y - gLastGest.y);
+    var longestDistance = (distanceX > distanceY)? distanceX : distanceY;
+    // var timeDiff = (gCurrGest.time - gLastGest.time)/5;
+    
+    return {width: 2* longestDistance, height: longestDistance}
+}
+
+
 
 
 function drawLine() {
@@ -116,16 +139,7 @@ function drawCircle(x, y) {
 
 
 
-function getGestDir() {
-    console.log(gLastGest.x, gCurrGest.x);
-    var diffX = (gCurrGest.x - gLastGest.x)
-    var diffY = (gCurrGest.y - gLastGest.y)
 
-    if (diffX > 0 && diffY > 0) return 90 * diffX * diffY
-
-    // return diffX + diffY
-    console.log('diffX', diffX, diffY);
-}
 
 
 
@@ -235,6 +249,27 @@ function drawRect(x, y) {
 
 
 
+
+
+function getGestDeg() {
+    console.log(gLastGest.x, gCurrGest.x);
+    var diffX = (gCurrGest.x - gLastGest.x)
+    var diffY = (gCurrGest.y - gLastGest.y)
+
+
+    if (!diffY) return 90
+    if (!diffX) return 0
+    if (diffX>0 && diffY>0 || diffX<0 && diffY <0) {
+        console.log('diffX+diffY >0', diffX+diffY);
+        return 130 
+    }
+    if (diffX<0 && diffY>0 || diffX>0 && diffY <0) {
+        console.log('diffX+diffY >0', diffX+diffY);
+        return 45 
+    }
+    // return diffX + diffY
+    console.log('diffX', diffX, diffY);
+}
 
 
 
