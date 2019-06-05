@@ -12,7 +12,6 @@ var gCurrGest = {};
 //prefs
 
 
-
 function init() {
     gCanvas = document.querySelector('#myCanvas');
     gCtx = gCanvas.getContext('2d')
@@ -26,13 +25,13 @@ function init() {
 function onMouseDown(ev) {
     // console.log(ev);
     gIsMouseDown = true;
-    
+
 }
 
 
 function onMouseMove(ev) {
     if (!gIsMouseDown) return;
-    gCtx.save();
+   
     gLastGest.x = gCurrGest.x;
     gLastGest.y = gCurrGest.y;
 
@@ -41,8 +40,12 @@ function onMouseMove(ev) {
 
     gCurrGest.x = offsetX;
     gCurrGest.y = offsetY;
+    
 
+    gCtx.save();
+    gCtx.beginPath()
     draw(ev)
+
     gCtx.restore();
 
 }
@@ -52,7 +55,7 @@ function onMouseUp(ev) {
     gIsMouseDown = false;
     gLastGest = {}
     gCurrGest = {}
-    
+
 }
 
 
@@ -62,14 +65,17 @@ function draw(ev) {
     const offsetX = ev.offsetX
     const offsetY = ev.offsetY
     console.log(getPrefs().shape);
-    switch(getPrefs().shape) {
+    switch (getPrefs().shape) {
         case 'rect':
             drawRect(offsetX, offsetY)
             break;
         case 'line':
             drawLine(offsetX, offsetY)
             break;
-    }    
+        case 'circle': 
+            drawCircle(offsetX, offsetY)  
+            break; 
+    }
 }
 
 
@@ -79,25 +85,22 @@ function drawRect(x, y) {
     var width = 100;
     var heigth = 50;
 
-    var gestX = x - width / 2
-    var gestY = y - heigth / 2
+    var centerX = x - width / 2
+    var centerY = y - heigth / 2
 
     // Matrix transformation
-    gCtx.translate(gestX + width / 2, gestY + heigth / 2);
+    gCtx.translate(centerX + width / 2, centerY + heigth / 2);
     var deg = Math.random() * 180;
     gCtx.rotate(deg * Math.PI / 180);
-    gCtx.translate(-(gestX + width / 2), -(gestY + heigth / 2));
-
+    gCtx.translate(-(centerX + width / 2), -(centerY + heigth / 2));
 
     //rectangle
-    gCtx.rect(gestX, gestY, width, heigth);
-    // gCtx.strokeStyle = getPrefs().color;
+    gCtx.rect(centerX, centerY, width, heigth);
     gCtx.stroke()
 }
 
 
-function drawLine(x, y) {
-    gCtx.beginPath();
+function drawLine() {
     gCtx.moveTo(gLastGest.x, gLastGest.y);
     gCtx.lineTo(gCurrGest.x, gCurrGest.y);
     gCtx.stroke();
@@ -105,7 +108,11 @@ function drawLine(x, y) {
 
 
 
-
+function drawCircle(x, y) {
+    gCtx.beginPath();
+    gCtx.arc(x, y, 20, 0, 2 * Math.PI);
+    gCtx.stroke();
+}
 
 
 
@@ -123,11 +130,7 @@ function getGestDir() {
 
 
 function onChangeColor(color) {
-    gCtx.strokeStyle = color;    
-    ctx.save();
-    console.log('color',  gCtx.strokeStyle, color);
-    changeColor(color)
-
+    gCtx.strokeStyle = color;
 }
 
 
@@ -135,6 +138,30 @@ function onSetShape(shape) {
     console.log('shape', shape);
     setShape(shape)
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
