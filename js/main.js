@@ -11,6 +11,9 @@ var gCurrGest = {};
 
 
 function init() {
+    createPrefs();
+    renderPrefs()
+    console.log('gprefs', getPrefs());
     gCanvas = document.querySelector('#myCanvas');
     gCtx = gCanvas.getContext('2d')
 
@@ -19,6 +22,11 @@ function init() {
 }
 
 
+function renderPrefs() {
+    var prefs = getPrefs();
+    document.querySelector('#color').value = prefs.color;
+    document.querySelector('#shape').value = prefs.shape;
+}
 
 function onMouseDown(ev) {
     gIsMouseDown = true;
@@ -36,7 +44,6 @@ function onMouseMove(ev) {
 
     gCurrGest.x = offsetX;
     gCurrGest.y = offsetY;
-    gCurrGest.time = Date.now()
     
 
     gCtx.save(); //
@@ -62,6 +69,7 @@ function draw(ev) {
     ev.preventDefault();
     const offsetX = ev.offsetX
     const offsetY = ev.offsetY
+    gCtx.strokeStyle = getPrefs().color;
     switch (getPrefs().shape) {
         case 'rect':
             drawRect(offsetX, offsetY)
@@ -78,7 +86,6 @@ function draw(ev) {
 
 
 function drawRect(x, y) {
-    // console.log('times:', gCurrGest.time -gLastGest.time );
     var dimensions = getDimensions()
     var width = dimensions.width
     var heigth = dimensions.height
@@ -102,9 +109,8 @@ function getGestDeg() {
     var diffX = (gCurrGest.x - gLastGest.x)
     var diffY = (gCurrGest.y - gLastGest.y)
 
-    // var shipua = diffY/diffX
     var angleDeg = Math.atan2(diffY, diffX) * 180 / Math.PI;
-    return angleDeg + 90;
+    return angleDeg + 90; //meunach leshipua hayashar
 }
 
 
@@ -112,8 +118,7 @@ function getDimensions() {
     var distanceX = Math.abs(gCurrGest.x - gLastGest.x);
     var distanceY = Math.abs(gCurrGest.y - gLastGest.y);
     var longestDistance = (distanceX > distanceY)? distanceX : distanceY;
-    // var timeDiff = (gCurrGest.time - gLastGest.time)/5;
-    
+
     return {width: 2* longestDistance, height: longestDistance}
 }
 
@@ -135,8 +140,8 @@ function drawCircle(x, y) {
 }
 
 
-function onChangeColor(color) {
-    gCtx.strokeStyle = color;
+function onSetColor(color) {
+    setColor(color)
 }
 
 

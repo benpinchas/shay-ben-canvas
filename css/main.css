@@ -9,7 +9,7 @@ body {
 
 
 .prefs-container {
-    background-color: antiquewhite;
+    /* background-color: antiquewhite; */
     width: 300px;
     margin: 0 auto;
     display: flex;
